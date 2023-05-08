@@ -1,3 +1,6 @@
+# 在该文件所在目录下运行 docker build -t easymock:fix .
+# ---------------------------------------------------
+
 FROM ubuntu:16.04
 
 # add user group, user and make user home dir
@@ -25,14 +28,15 @@ RUN wget http://cdn.npm.taobao.org/dist/node/v8.4.0/node-v8.4.0-linux-x64.tar.gz
     ln -s /home/easy-mock/node-v8.4.0-linux-x64/bin/npm /usr/local/bin/npm
 
 # download easy-mock source code
-USER easy-mock
-
 RUN mkdir easy-mock && \
-    wget https://github.com/easy-mock/easy-mock/archive/v1.6.0.tar.gz && \
-    tar -xzvf v1.6.0.tar.gz -C easy-mock --strip-components 1
+    git clone https://github.com/Champf/easy-mock.git
+
+RUN chmod 777 -R /home/easy-mock/easy-mock
 
 # npm install dependencies and run build
 WORKDIR /home/easy-mock/easy-mock
+
+USER easy-mock
 
 RUN jq '.db = "mongodb://mongodb/easy-mock"' config/default.json > config/tmp.json && \
     mv config/tmp.json config/default.json
